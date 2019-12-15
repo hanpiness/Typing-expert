@@ -36,6 +36,12 @@ struct letter
 struct letter letters[5];     // 每一次出现5个字符
 int score = 0;                // 玩家的分数
 int HP = 10;                  // 玩家的血量
+int Delete = 0;               // 玩家消灭的字母
+int Time = 0;                 // 游戏时间
+char now_score[20];           // 实时分数变化
+char now_HP[20];              // 实时血量变化
+char now_delete[20];          // 实时消灭的字母
+char now_Time[20];           // 实时按键次数
 IMAGE background;             // 背景
 IMAGE kuang;                  // 字母所在的框
 IMAGE background_help;        // 帮助背景
@@ -119,6 +125,7 @@ void mouse_move()
 				// 进入游戏
 				HP = 10;
 				score = 0;
+				Delete = 0;
 				break;
 			}
 		}
@@ -178,7 +185,7 @@ void draw_help()
 		outtextxy(100, 50, _T("想要成为一个打字专家，你就必须学会快速准确的打字"));
 		outtextxy(100, 100, _T("只有经过不断的练习才能够实现，一起来挑战吧。"));
 		outtextxy(100, 150, _T("1、敲出正确的字母并消灭所有的字母"));
-		outtextxy(100, 200, _T("2、在开始游戏之前请关闭输入法"));
+		outtextxy(100, 200, _T("2、在开始游戏之前请切换为大写模式"));
 		outtextxy(100, 250, _T("现在返回菜单点击开始游戏开始挑战吧"));
 		outtextxy(text4_x + 10, text4_y + 13, _T("返回主菜单"));
 		// 键盘响应
@@ -208,12 +215,6 @@ void initchar(struct letter array[], int i)
 
 	array[i].x_letter = rand() % 14 * 50 + 100;  // 使字母出现一定范围且出现的位置不同
 	array[i].y_letter = rand() % 51 - 100;
-}
-
-// 画暂停界面
-void draw_pouse()
-{
-
 }
 
 void playgame()
@@ -256,22 +257,20 @@ void playgame()
 			char userKey = _getch();  // 获取按键的信息
 			for (int i = 0; i < 5; i++)
 			{
+				if (userKey)
+				{
+					count++;
+				}
 				if (letters[i].target == userKey || letters[i].target == userKey - ('a' - 'A'))
 				{
 					score += score_up_speed;
+					Delete += 1;
 					initchar(letters, i); // 产生一个新的字母
 					CreateThread(NULL, 0, playMusic, NULL, NULL, NULL); // 在新的线程中显示爆炸声
 					break;
 				}
-				if (userKey == 0x1b)
-				{
-
-					draw_pouse();
-				}
 			}
 		}
-		char now_score[20];
-		char now_HP[20];
 		settextstyle(20, 0, _T("STXINGKA"));
 		_stprintf_s(now_score, _T("分数：%d"), score);
 		_stprintf_s(now_HP, _T("HP：%d"), HP);
@@ -298,6 +297,8 @@ void draw_gameover()
 		//文字布局
 		settextcolor(WHITE);
 		settextstyle(25, 0, _T("STXINGKA"));
+		_stprintf_s(now_delete, _T("分数：%d"), Delete);
+		outtextxy(50,50,now_delete);
 		outtextxy(300, 400, _T("返回主菜单"));
 		outtextxy(300, 450, _T(" 退出游戏"));
 		// 鼠标响应
