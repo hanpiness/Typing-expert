@@ -100,6 +100,7 @@ void draw_mune()
 // 菜单操作
 void mouse_move()
 {
+	void playgame();
 	void draw_help();
 	initgraph(bk_width, bk_high);
 	draw_mune();
@@ -116,6 +117,8 @@ void mouse_move()
 			if (m.uMsg == WM_LBUTTONDOWN)
 			{
 				// 进入游戏
+				HP = 10;
+				score = 0;
 				break;
 			}
 		}
@@ -149,7 +152,9 @@ void mouse_move()
 			rectangle(text1_x - 5, text2_y - 5, text2_x + text_width + 5, text2_y + text_high + 5);
 			rectangle(text3_x - 5, text3_y - 5, text3_x + text_width + 5, text3_y + text_high + 5);
 		}
+		FlushBatchDraw();
 	}
+	playgame();
 	closegraph();
 }
 
@@ -183,6 +188,7 @@ void draw_help()
 				break;
 			}
 		}
+		FlushBatchDraw();
 	}
 	closegraph();
 	mouse_move();
@@ -204,7 +210,11 @@ void initchar(struct letter array[], int i)
 	array[i].y_letter = rand() % 51 - 100;
 }
 
+// 画暂停界面
+void draw_pouse()
+{
 
+}
 
 void playgame()
 {
@@ -253,6 +263,11 @@ void playgame()
 					CreateThread(NULL, 0, playMusic, NULL, NULL, NULL); // 在新的线程中显示爆炸声
 					break;
 				}
+				if (userKey == 0x1b)
+				{
+
+					draw_pouse();
+				}
 			}
 		}
 		char now_score[20];
@@ -273,10 +288,37 @@ void playgame()
 
 void draw_gameover()
 {
+	MOUSEMSG n;
 	loadpicture();                // 加载图片
 	initgraph(bk_width, bk_high);
 	putimage(0, 0, &background_gameove);
-	EndBatchDraw();
+	while (1)
+	{
+		n = GetMouseMsg();
+		//文字布局
+		settextcolor(WHITE);
+		settextstyle(25, 0, _T("STXINGKA"));
+		outtextxy(300, 400, _T("返回主菜单"));
+		outtextxy(300, 450, _T(" 退出游戏"));
+		// 鼠标响应
+		if (n.x >= 300 && n.x <= 300 + text_width && n.y >= 400 && n.y <= 400 + text_high)
+		{
+			if (n.uMsg == WM_LBUTTONDOWN)
+			{
+				mouse_move();
+				break;
+			}
+		}
+		if (n.x >= 300 && n.x <= 300 + text_width && n.y >= 450 && n.y <= 450 + text_high)
+		{
+			if (n.uMsg == WM_LBUTTONDOWN)
+			{
+				exit(0);
+			}
+		}
+		FlushBatchDraw();
+	}
+	closegraph();
 }
 
 int main()
@@ -284,6 +326,5 @@ int main()
 	mciSendString(_T("open D:\\打字练习系统\\打字母\\小提琴.mp3 alias music"), 0, 0, 0);
 	mciSendString(_T("play music repeat"),0,0,0);       // 音乐循环播放
 	mouse_move();
-	playgame();
 	return 0;
 }
