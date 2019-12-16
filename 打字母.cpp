@@ -37,11 +37,13 @@ struct letter letters[5];     // 每一次出现5个字符
 int score = 0;                // 玩家的分数
 int HP = 10;                  // 玩家的血量
 int Delete = 0;               // 玩家消灭的字母
-int Time = 0;                 // 游戏时间
+int level = 1;				  // 游戏的等级
+clock_t begin, end;           // 记录游戏时间
 char now_score[20];           // 实时分数变化
 char now_HP[20];              // 实时血量变化
 char now_delete[20];          // 实时消灭的字母
-char now_Time[20];           // 实时按键次数
+char now_Time[20];            // 实时游戏时间
+char now_level[20];           // 实时游戏等级
 IMAGE background;             // 背景
 IMAGE kuang;                  // 字母所在的框
 IMAGE background_help;        // 帮助背景
@@ -126,6 +128,7 @@ void mouse_move()
 				HP = 10;
 				score = 0;
 				Delete = 0;
+				begin = clock();
 				break;
 			}
 		}
@@ -186,7 +189,8 @@ void draw_help()
 		outtextxy(100, 100, _T("只有经过不断的练习才能够实现，一起来挑战吧。"));
 		outtextxy(100, 150, _T("1、敲出正确的字母并消灭所有的字母"));
 		outtextxy(100, 200, _T("2、在开始游戏之前请切换为大写模式"));
-		outtextxy(100, 250, _T("现在返回菜单点击开始游戏开始挑战吧"));
+		outtextxy(100, 250, _T("3、在游戏开始后你可以按下Esc键退出游戏"));
+		outtextxy(100, 300, _T("现在返回菜单点击开始游戏开始挑战吧"));
 		outtextxy(text4_x + 10, text4_y + 13, _T("返回主菜单"));
 		// 键盘响应
 		if (n.x >= text4_x && n.x <= text4_x + text_width && n.y >= text4_y && n.y <= text4_y + text_high) {
@@ -233,13 +237,14 @@ void playgame()
 		//字母的移动
 		for (int i = 0; i < 5; i++)
 		{
-			letters[i].y_letter += speed;   // 字母下降的速度
-			if (letters[i].y_letter >= bk_high) // 如果字母触碰到底线
+			letters[i].y_letter += speed * level *0.8;   // 字母下降的速度
+			if (letters[i].y_letter >= bk_high)     // 如果字母触碰到底线
 			{ 
-				initchar(letters, i);           // 则加载一个新的字母
+				initchar(letters, i);               // 则加载一个新的字母
 				HP = HP - 1;
 				if (HP == 0)
 				{
+					end = clock();
 					draw_gameover();
 					goto out;
 				}
@@ -257,26 +262,32 @@ void playgame()
 			char userKey = _getch();  // 获取按键的信息
 			for (int i = 0; i < 5; i++)
 			{
-				if (userKey)
-				{
-					count++;
-				}
 				if (letters[i].target == userKey || letters[i].target == userKey - ('a' - 'A'))
 				{
-					score += score_up_speed;
+					score += score_up_speed * level;
 					Delete += 1;
+					level = score / 500 + 1;
 					initchar(letters, i); // 产生一个新的字母
 					CreateThread(NULL, 0, playMusic, NULL, NULL, NULL); // 在新的线程中显示爆炸声
+
 					break;
+				}
+				if (userKey == 27)    // 退出游戏界面
+				{
+					end = clock();
+					draw_gameover();
+					goto out;
 				}
 			}
 		}
 		settextstyle(20, 0, _T("STXINGKA"));
 		_stprintf_s(now_score, _T("分数：%d"), score);
 		_stprintf_s(now_HP, _T("HP：%d"), HP);
+		_stprintf_s(now_level, _T("关卡： %d"), level);
 		setbkmode(TRANSPARENT);
 		outtextxy(700, 20, now_score);
 		outtextxy(50, 20, now_HP);
+		outtextxy(350, 20, now_level);
 		Sleep(100);
 		FlushBatchDraw();
 	}
@@ -297,8 +308,16 @@ void draw_gameover()
 		//文字布局
 		settextcolor(WHITE);
 		settextstyle(25, 0, _T("STXINGKA"));
-		_stprintf_s(now_delete, _T("分数：%d"), Delete);
+		_stprintf_s(now_delete, _T("共消灭的字母：%d个"), Delete);
+		_stprintf_s(now_Time, _T("游戏时间：%.2fs"), ((double)end - begin) / CLK_TCK);
+		_stprintf_s(now_score, _T("分数：%d"), score);
+		if (level == 1)
+		{
+			outtextxy(200, 100, _T("恭喜您，获得 倔强青铜 称号"));
+		}
+		outtextxy(350, 50, now_Time);
 		outtextxy(50,50,now_delete);
+		outtextxy(650, 50, now_score);
 		outtextxy(300, 400, _T("返回主菜单"));
 		outtextxy(300, 450, _T(" 退出游戏"));
 		// 鼠标响应
