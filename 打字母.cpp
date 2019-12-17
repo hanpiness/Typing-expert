@@ -44,18 +44,30 @@ char now_HP[20];              // 实时血量变化
 char now_delete[20];          // 实时消灭的字母
 char now_Time[20];            // 实时游戏时间
 char now_level[20];           // 实时游戏等级
-IMAGE background;             // 背景
+IMAGE background1, background2, background3, background4, background5; // 背景
 IMAGE kuang;                  // 字母所在的框
 IMAGE background_help;        // 帮助背景
 IMAGE background_gameove;     // 游戏结束背景
+IMAGE qingt, huangj, zhuans, wangz, baiy;  // 段位图片
 
 // 加载图片
 void loadpicture()
 {
-	loadimage(&background, _T("D:\\打字练习系统\\打字母\\地图.jpg"),800,600);
+	loadimage(&background1, _T("D:\\打字练习系统\\打字母\\背景1.png"), 800, 600);
+	loadimage(&background2, _T("D:\\打字练习系统\\打字母\\背景2.png"), 800, 600);
+	loadimage(&background3, _T("D:\\打字练习系统\\打字母\\背景3.png"), 800, 600);
+	loadimage(&background4, _T("D:\\打字练习系统\\打字母\\背景4.png"), 800, 600);
+	loadimage(&background5, _T("D:\\打字练习系统\\打字母\\背景5.png"), 800, 600);
 	loadimage(&kuang, _T("D:\\打字练习系统\\打字母\\框.png"), 50, 50);
 	loadimage(&background_help, _T("D:\\打字练习系统\\打字母\\帮助.png"), 800, 600);
 	loadimage(&background_gameove, _T("D:\\打字练习系统\\打字母\\游戏结束.png"), 800, 600);
+	loadimage(&huangj, _T("D:\\打字练习系统\\打字母\\黄金.png"));
+	loadimage(&zhuans, _T("D:\\打字练习系统\\打字母\\钻石.png"));
+	loadimage(&qingt, _T("D:\\打字练习系统\\打字母\\青铜.png"));
+	loadimage(&wangz, _T("D:\\打字练习系统\\打字母\\王者.png"));
+	loadimage(&baiy, _T("D:\\打字练习系统\\打字母\\白银.png"));
+	loadimage(&background1, _T("D:\\打字练习系统\\打字母\\背景1.png"));
+//	loadimage(&baiy, _T("D:\\打字练习系统\\打字母\\背景2.png"));
 }
 
 DWORD WINAPI playMusic(LPVOID lpParame)  // LPVOID是一个void*的类型用于作为参数传回线程
@@ -233,11 +245,31 @@ void playgame()
 	while (1)
 	{
 		BeginBatchDraw();         // 先绘图最后显示，可以避免闪烁
-		putimage(0, 0, &background); 
+		putimage(0, 0, &background1); 
+		if (level == 2)
+		{
+			BeginBatchDraw();
+			putimage(0, 0, &background2);
+		}
+			if (level == 3)
+			{
+				BeginBatchDraw();
+				putimage(0, 0, &background3);
+			}
+			if (level == 4)
+			{
+				BeginBatchDraw();
+				putimage(0, 0, &background4);
+			}
+			if (level >= 5)
+			{
+				BeginBatchDraw();
+				putimage(0, 0, &background5);
+			}
 		//字母的移动
 		for (int i = 0; i < 5; i++)
 		{
-			letters[i].y_letter += speed * level *0.8;   // 字母下降的速度
+			letters[i].y_letter += speed  *0.7 * level;   // 字母下降的速度
 			if (letters[i].y_letter >= bk_high)     // 如果字母触碰到底线
 			{ 
 				initchar(letters, i);               // 则加载一个新的字母
@@ -313,7 +345,28 @@ void draw_gameover()
 		_stprintf_s(now_score, _T("分数：%d"), score);
 		if (level == 1)
 		{
+			putimage(50, 100, &qingt);
 			outtextxy(200, 100, _T("恭喜您，获得 倔强青铜 称号"));
+		}
+		if (level == 2)
+		{
+			putimage(50, 100, &baiy);
+			outtextxy(200, 100, _T("恭喜您，获得 秩序白银 称号"));
+		}
+		if (level == 3)
+		{
+			putimage(50, 100, &huangj);
+			outtextxy(200, 100, _T("恭喜您，获得 荣耀黄金 称号"));
+		}
+		if (level == 4)
+		{
+			putimage(50, 100, &zhuans);
+			outtextxy(200, 100, _T("恭喜您，获得 永恒钻石 称号"));
+		}
+		if (level >= 5)
+		{
+			putimage(50, 100, &wangz);
+			outtextxy(200, 100, _T("恭喜您，获得 最强王者 称号"));
 		}
 		outtextxy(350, 50, now_Time);
 		outtextxy(50,50,now_delete);
