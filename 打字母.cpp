@@ -70,7 +70,7 @@ void loadpicture()
 //	loadimage(&baiy, _T("D:\\打字练习系统\\打字母\\背景2.png"));
 }
 
-DWORD WINAPI playMusic(LPVOID lpParame)  // LPVOID是一个void*的类型用于作为参数传回线程
+DWORD WINAPI playMusic(LPVOID lpParame)  // LPVOID是一个void*的类型用于作为参数传回线程，线程声明方式
 {
 	mciSendString(_T("open D:\\打字练习系统\\打字母\\爆炸声.mp3 alias music2"), 0, 0, 0); // 打开多媒体文件
 	mciSendString(_T("play music2 wait"), 0, 0, 0); // 播放完函数才返回
