@@ -4,7 +4,10 @@
 #include<time.h>              // 随机函数
 #include<conio.h>             // getch()响应按键
 #include<Windows.h>           // 创建多线程
-#include<mmsystem.h>          // 音乐
+#include<mmsystem.h>          // 音乐 mciSendString()
+
+#pragma comment(lib,"winmm.lib")  // 编译器指令,指定连接要使用的库
+// 在vs2010以上需要用到，才可以进行音乐播放
 
 #define bk_width 800		  // 背景的宽
 #define bk_high  600          // 背景的高
@@ -21,8 +24,6 @@
 #define speed 10              // 字母下降的速度
 #define score_up_speed 10     // 分数增加的速度
 
-#pragma comment(lib,"winmm.lib")  // 编译器指令,指定连接要使用的库
-								  // 在vs2010以上需要用到，才可以进行音乐播放
 
 //字母结构体
 struct letter
@@ -44,6 +45,7 @@ char now_HP[20];              // 实时血量变化
 char now_delete[20];          // 实时消灭的字母
 char now_Time[20];            // 实时游戏时间
 char now_level[20];           // 实时游戏等级
+
 IMAGE background1, background2, background3, background4, background5; // 背景
 IMAGE kuang;                  // 字母所在的框
 IMAGE background_help;        // 帮助背景
