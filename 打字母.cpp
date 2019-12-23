@@ -61,7 +61,7 @@ void loadpicture()
 	loadimage(&background4, _T("D:\\打字练习系统\\打字母\\背景4.png"), 800, 600);
 	loadimage(&background5, _T("D:\\打字练习系统\\打字母\\背景5.png"), 800, 600);
 	loadimage(&kuang, _T("D:\\打字练习系统\\打字母\\框.png"), 50, 50);
-	loadimage(&background_help, _T("D:\\打字练习系统\\打字母\\帮助.png"), 800, 600);
+	loadimage(&background_help, _T("D:\\打字练习系统\\打字母\\帮助.jpg"), 800, 600);
 	loadimage(&background_gameove, _T("D:\\打字练习系统\\打字母\\游戏结束.png"), 800, 600);
 	loadimage(&huangj, _T("D:\\打字练习系统\\打字母\\黄金.png"));
 	loadimage(&zhuans, _T("D:\\打字练习系统\\打字母\\钻石.png"));
@@ -69,7 +69,6 @@ void loadpicture()
 	loadimage(&wangz, _T("D:\\打字练习系统\\打字母\\王者.png"));
 	loadimage(&baiy, _T("D:\\打字练习系统\\打字母\\白银.png"));
 	loadimage(&background1, _T("D:\\打字练习系统\\打字母\\背景1.png"));
-//	loadimage(&baiy, _T("D:\\打字练习系统\\打字母\\背景2.png"));
 }
 
 DWORD WINAPI playMusic(LPVOID lpParame)  // LPVOID是一个void*的类型用于作为参数传回线程，线程声明方式
@@ -139,9 +138,10 @@ void mouse_move()
 			if (m.uMsg == WM_LBUTTONDOWN)
 			{
 				// 进入游戏
-				HP = 10;
+				HP = 10;              // 重新设定游戏数据
 				score = 0;
 				Delete = 0;
+				level = 1;
 				begin = clock();
 				break;
 			}
@@ -271,7 +271,7 @@ void playgame()
 		//字母的移动
 		for (int i = 0; i < 5; i++)
 		{
-			letters[i].y_letter += speed  *0.7 * level;   // 字母下降的速度
+			letters[i].y_letter += speed  *0.8 * level;   // 字母下降的速度
 			if (letters[i].y_letter >= bk_high)     // 如果字母触碰到底线
 			{ 
 				initchar(letters, i);               // 则加载一个新的字母
@@ -326,7 +326,7 @@ void playgame()
 		FlushBatchDraw();
 	}
 	out:
-	_getch();
+	_getch();          //可以使窗口驻留，起到一个按任意键再退出的效果
 	closegraph();
 }
 
